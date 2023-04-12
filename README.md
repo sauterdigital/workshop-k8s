@@ -15,8 +15,10 @@ https://k3d.io/v5.4.9/
 
 #### kubectl
 
+```sh
 curl.exe -LO "https://dl.k8s.io/release/v1.26.0/bin/windows/amd64/kubectl.exe" ou 
 choco install kubernetes-cli
+```
 
 #### k3d
 
