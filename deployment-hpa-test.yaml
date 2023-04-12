@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: infinite-calls
+  name: infinite-calls
+  namespace: infinite-calls
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: infinite-calls
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: infinite-calls
+    spec:
+      containers:
+      - name: infinite-calls
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - "while true; do wget -q -O- http://hello-kubernetes-hello-world.hello-kubernetes; done"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi        

@@ -1,0 +1,54 @@
+version: "3.4"
+
+services:
+  redis:
+    image: redis
+    volumes:
+      - $DOCKER_VOLUMES_PATH/redis/$REDIS_FOLDER:/data
+    networks:
+      - proxy
+    ports:
+      - "$REDIS_PORT"
+    command: bash -c "redis-server --port $REDIS_PORT --appendonly yes"
+
+  go-api-portais:
+    build:
+      context: ./go
+      args:
+        REPOSITORY: $GOLANG_REPOSITORY
+        BRANCH: $GOLANG_BRANCH
+        ENV_FILE: $GOLANG_ENV_FILE
+        BITBUCKET_USER: $BITBUCKET_USER
+        BITBUCKET_PASSWORD: $BITBUCKET_PASSWORD
+        BITBUCKET_TOKEN: $BITBUCKET_TOKEN
+    environment:
+      PORT: $GOLANG_PORT
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "files:/go/src"
+      - $DOCKER_VOLUMES_PATH/api-portais/telemetry:/var/log/telemetry
+      - $DOCKER_VOLUMES_PATH/api-portais/logs:/go/src/bitbucket.org/eucatur/api-portais/logs
+    networks:
+      - proxy
+    depends_on:
+      - redis
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.dev-api-portais.tls=true"
+      - "traefik.http.routers.dev-api-portais.entrypoints=web-secure"
+      - "traefik.http.routers.dev-api-portais.rule=Host(`api-portais.euca.tur.br`)"
+      - "traefik.http.routers.dev-api-portais.tls.certresolver=eucatur"
+      - "traefik.http.services.dev-api-portais.loadbalancer.server.port=$GOLANG_PORT"
+      - "traefik.http.routers.dev-api-portais.tls.domains[0].main=*.euca.tur.br"
+
+volumes:
+  files:
+
+networks:
+  proxy:
+    external:
+      name: proxy
+
+
