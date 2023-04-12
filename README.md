@@ -6,8 +6,7 @@ https://k3d.io/v5.4.9/
 
 ### Requisitos
 
-- Docker
-> Note: k3d v5.x.x requires at least Docker v20.10.5 (runc >= v1.0.0-rc93) to work properly (see #807)
+- [Docker](https://docs.docker.com/engine/install) (k3d v5.x.x requer Docker v20.10.5 ou superior (runc >= v1.0.0-rc93) 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) to interact with the Kubernetes cluster
 
 
